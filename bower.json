@@ -1,0 +1,25 @@
+{
+  "name": "reactible",
+  "version":"0.0.1",
+  "homepage": "https://github.com/nkornel/reactible",
+  "description": "A React.js based in-place plugin for html forms.",
+  "main": "dist/js/reactible.min.js",
+  "moduleType": [
+    "es6"
+  ],
+  "keywords": [
+    "[editable, in-place]"
+  ],
+  "authors": [
+    "Kornél Mergulhao-Novák"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
