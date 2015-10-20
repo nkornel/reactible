@@ -27,7 +27,8 @@ module.exports = function (grunt) {
             },
             dist: {
                 files: {
-                    'dist/js/<%= pkg.name %>.js': 'src/editablefield.js'
+                    'dist/js/<%= pkg.name %>.js': 'src/editablefield.js',
+                    'dist/js/<%= pkg.name %>.renderer.js': 'src/renderer.js'
                 }
             }
         },
@@ -38,9 +39,22 @@ module.exports = function (grunt) {
             },
             build: {
                 files: {
-                    'dist/js/<%= pkg.name %>.min.js':['src/customevent.js','dist/js/<%= pkg.name %>.js','node_modules/react/dist/react.js','node_modules/react-dom/dist/react-dom.js']
+                    'dist/js/<%= pkg.name %>.min.js': [
+                        'src/customevent.js',
+                        'src/dataset.js',
+                        'src/axe.js',
+                        'node_modules/react/dist/react.js',
+                        'node_modules/react-dom/dist/react-dom.js',
+                        'dist/js/<%= pkg.name %>.js',
+                        'dist/js/<%= pkg.name %>.renderer.js'
+                    ]
                 }
             }
+        },
+
+        watch: {
+            files: ['src/editablefield.js','src/renderer.js'],
+            tasks: ['babel']
         },
 
         'string-replace': {

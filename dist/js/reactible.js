@@ -36,20 +36,36 @@ var EditableFieldBox = React.createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        $.get(this.props.fieldSource, (function (res) {
-            if (this.props.fieldType === 'select' && typeof this.props.fieldSelected !== 'undefined') {
-                var x = res.filter((function (obj) {
+        var formattedRes, fieldVal;
+
+        if (this.props.fieldType === 'select' && typeof this.props.fieldSelected !== 'undefined') {
+            /**
+             * In case of select, radio, check and select2 we need
+             * the prepopulated list with id: fieldName parts.
+             */
+            Axe.grab(this.props.fieldSource, (function (res) {
+                formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
+                fieldVal = formattedRes.filter((function (obj) {
                     return obj.id == this.props.fieldSelected;
                 }).bind(this))[0][this.props.fieldName];
 
-                this.setState({ fieldValue: x });
-            } else {
-                this.setState({ fieldValue: res[this.props.fieldName] });
-            }
-        }).bind(this));
+                this.setState({ fieldValue: fieldVal });
+            }).bind(this));
+        } else {
+            // In case of text, textArea we just get and show.
+            Axe.grab(this.props.fieldUrl, (function (res) {
+                this.setState({ fieldValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName] });
+            }).bind(this));
+        }
 
         window.addEventListener('stored', (function (e) {
-            this.setState({ fieldValue: e.detail });
+            if (this.props.fieldType === 'select' && typeof this.props.fieldSelected !== 'undefined') {
+                Axe.grab(this.props.fieldSource + '/' + e.detail, (function (res) {
+                    this.setState({ fieldValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName] });
+                }).bind(this));
+            } else {
+                this.setState({ fieldValue: e.detail });
+            }
         }).bind(this));
     },
 
@@ -66,7 +82,12 @@ var EditableFieldBox = React.createClass({
                 null,
                 this.props.fieldTitle
             ),
-            React.createElement(EditableField, { fieldType: this.props.fieldType, fieldValue: this.state.fieldValue, fieldSource: this.props.fieldSource, fieldSelected: this.props.fieldSelected, fieldName: this.props.fieldName })
+            React.createElement(EditableField, { fieldType: this.props.fieldType,
+                fieldValue: this.state.fieldValue,
+                fieldUrl: this.props.fieldUrl,
+                fieldSource: this.props.fieldSource,
+                fieldSelected: this.props.fieldSelected,
+                fieldName: this.props.fieldName })
         );
     }
 });
@@ -104,7 +125,14 @@ var EditableField = React.createClass({
                 { onClick: this.handleEditClick, className: this.state.viewStatus ? '' : 'hidden' },
                 this.props.fieldValue
             ),
-            React.createElement(EditableEditBox, { viewStatus: this.state.viewStatus, fieldType: this.props.fieldType, callbackViewParent: this.handleCloseClick, fieldValue: this.props.fieldValue, fieldSource: this.props.fieldSource, fieldName: this.props.fieldName, fieldSelected: this.props.fieldSelected })
+            React.createElement(EditableEditBox, { viewStatus: this.state.viewStatus,
+                fieldType: this.props.fieldType,
+                fieldValue: this.props.fieldValue,
+                fieldUrl: this.props.fieldUrl,
+                fieldSource: this.props.fieldSource,
+                fieldName: this.props.fieldName,
+                fieldSelected: this.props.fieldSelected,
+                callbackViewParent: this.handleCloseClick })
         );
     }
 });
@@ -150,7 +178,7 @@ var EditableEditBox = React.createClass({
             'div',
             { className: this.props.viewStatus ? 'hidden' : '' },
             this.mountComponent(),
-            React.createElement(EditableStoreButton, { fieldSource: this.props.fieldSource, callbackParent: this.onChildClick }),
+            React.createElement(EditableStoreButton, { fieldUrl: this.props.fieldUrl, fieldName: this.props.fieldName, callbackParent: this.onChildClick }),
             React.createElement(EditableCancelButton, { callbackParent: this.onChildClick })
         );
     }
@@ -209,8 +237,8 @@ var EditableSelectInput = React.createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        $.get(this.props.fieldSource, (function (res) {
-            this.setState({ fieldData: res, defValue: this.props.fieldSelected });
+        Axe.grab(this.props.fieldSource, (function (res) {
+            this.setState({ fieldData: typeof res == 'string' ? JSON.parse(res) : res, defValue: this.props.fieldSelected });
         }).bind(this));
     },
 
@@ -219,13 +247,13 @@ var EditableSelectInput = React.createClass({
     },
 
     render: function render() {
-        var selectNodes = this.state.fieldData.map(function (node) {
+        var selectNodes = this.state.fieldData.map((function (node) {
             return React.createElement(
                 'option',
                 { key: node.id, value: node.id },
-                node.name
+                node[this.props.fieldName]
             );
-        });
+        }).bind(this));
         return React.createElement(
             'select',
             { name: this.props.fieldName, id: 'editableInput', value: this.state.defValue, onChange: this.handleChange },
@@ -246,7 +274,8 @@ var EditableStoreButton = React.createClass({
 
     handleStoreEvent: function handleStoreEvent(event) {
         var val = document.getElementById('editableInput').value;
-        var urlVet = this.props.fieldSource.split('/').slice('3');
+        var url = this.props.fieldUrl;
+        var prop = this.props.fieldName;
 
         if (val.length === 0) {
             alert('Please fill the field');
@@ -254,15 +283,13 @@ var EditableStoreButton = React.createClass({
             return false;
         }
 
-        $.ajax({
-            type: 'PUT',
-            url: '/api/show/' + urlVet[0] + '/' + urlVet[1],
-            data: { 'name': val }
-        }).done((function (res) {
-            alert('Success!');
-            this.props.callbackParent();
+        Axe.slash(url, { prop: val }, null, (function (res) {
+            //alert('Success!');
             var storedEvent = new CustomEvent('stored', { 'detail': val });
             window.dispatchEvent(storedEvent);
+            setTimeout((function () {
+                this.props.callbackParent();
+            }).bind(this), 500);
         }).bind(this));
     },
 
