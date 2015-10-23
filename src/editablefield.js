@@ -32,19 +32,32 @@ var EditableFieldBox = React.createClass({
     },
     
     componentDidMount: function () {
-        var formattedRes, fieldVal;
+        var formattedRes, fieldVal = [];
 
-        if (this.props.fieldType === 'select' && typeof this.props.fieldSelected !== 'undefined') {
+        if ((this.props.fieldType === 'select' || this.props.fieldType == 'select-multiple')
+            && typeof this.props.fieldSelected !== 'undefined') {
             /**
              * In case of select, radio, check and select2 we need
              * the prepopulated list with id: fieldName parts.
+             *
+             * For select multiple we need to check for various values in array.
+             * For that we need to know if the fieldSelected is an array effectively and the filter 
+             * must be based on indexOf instead of equality validation.
              */
             Axe.grab(this.props.fieldSource, function (res) {
                 formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
-                fieldVal = formattedRes.filter(function (obj) {
-                    return obj.id == this.props.fieldSelected;
-                }.bind(this))[0][this.props.fieldName];
+                // We need the field value for the rendering.
+                var selected = this.props.fieldSelected.indexOf('[') === -1 ? JSON.parse('['+this.props.fieldSelected+']') : JSON.parse(this.props.fieldSelected);
 
+                var items = formattedRes.filter(function (obj) {
+                    return selected.indexOf(obj.id) > -1
+                });
+
+                for (var i = items.length - 1; i >= 0; i--) {
+                    fieldVal.push(items[i][this.props.fieldName]);
+                };
+                
+                //console.log(fieldVal); 
                 this.setState({fieldValue: fieldVal});
             }.bind(this));
         } else {
@@ -55,14 +68,39 @@ var EditableFieldBox = React.createClass({
         }
 
         window.addEventListener('stored', function (e) {
-            if (this.props.fieldType === 'select' && typeof this.props.fieldSelected !== 'undefined') {
-                Axe.grab(this.props.fieldSource + '/' + e.detail, function (res) {
+            if ((this.props.fieldType === 'select' || this.props.fieldType === 'select-multiple')
+                && typeof this.props.fieldSelected !== 'undefined') {
+
+                this.context.selection = e.detail;
+                fieldVal.length = 0; // Clearing the array
+
+                /*Axe.grab(this.props.fieldSource + '/' + e.detail, function (res) {
                     this.setState({fieldValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName]});
+                }.bind(this));*/
+
+                Axe.grab(this.props.fieldSource, function (res) {
+                    formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
+                    // We need the field value for the rendering.
+                    var selected = this.context.selection.indexOf('[') === -1 ? JSON.parse('['+this.context.selection+']') : JSON.parse(this.context.selection);
+
+                    var items = formattedRes.filter(function (obj) {
+                        return selected.indexOf(obj.id) > -1
+                    });
+
+                    for (var i = items.length - 1; i >= 0; i--) {
+                        fieldVal.push(items[i][this.props.fieldName]);
+                    };
+                    
+                    //console.log(fieldVal); 
+                    this.setState({fieldValue: fieldVal});
+                    delete this.context.selection;
                 }.bind(this));
+
             } else {
                 this.setState({fieldValue: e.detail});
             }
         }.bind(this));
+
     },
 
     componentWillUnmount: function() {
@@ -106,10 +144,29 @@ var EditableField = React.createClass({
         this.setState({viewStatus: true});
     },
 
+    checkType: function (fieldType) {
+        if (fieldType === 'select-multiple') {
+            var selectedNodes = this.props.fieldValue.map(function (node) {
+                return (
+                    <li class="selected_item" onClick={this.handleEditClick}>{node}</li>
+                );
+            }.bind(this));
+
+            return <div class="editableMultiple" className={this.state.viewStatus ? '' : 'hidden'}>
+                        <ul>
+                        {selectedNodes}
+                        </ul>
+                    </div>;
+
+        } else {
+            return <span onClick={this.handleEditClick} className={this.state.viewStatus ? '' : 'hidden'}>{this.props.fieldValue}</span>;
+        }
+    },
+
     render: function () {
         return (
             <div className="editableField">
-                <span onClick={this.handleEditClick} className={this.state.viewStatus ? '' : 'hidden'}>{this.props.fieldValue}</span>
+                {this.checkType(this.props.fieldType)}
                 <EditableEditBox viewStatus={this.state.viewStatus} 
                                  fieldType={this.props.fieldType} 
                                  fieldValue={this.props.fieldValue}
@@ -140,7 +197,13 @@ var EditableEditBox = React.createClass({
                 return <EditableTextInput fieldName={this.props.fieldName} fieldValue={this.props.fieldValue} fieldType={this.props.fieldType} />;
                 break;
             case 'select':
-                return <EditableSelectInput fieldName={this.props.fieldName} fieldValue={this.props.fieldValue} fieldSource={this.props.fieldSource} fieldSelected={this.props.fieldSelected}/>
+            case 'select-multiple':
+                return <EditableSelectInput 
+                            fieldName={this.props.fieldName} 
+                            fieldValue={this.props.fieldValue} 
+                            fieldSource={this.props.fieldSource} 
+                            fieldSelected={this.props.fieldSelected}
+                            fieldType={this.props.fieldType} />
                 break;
             case 'checkbox':
                 return '';
@@ -221,7 +284,14 @@ var EditableSelectInput = React.createClass({
     },
 
     handleChange: function (ev) {
-        this.setState({defValue:ev.target.value})
+        var selection = [];
+        for (var i = ev.target.options.length - 1; i >= 0; i--) {
+            if (ev.target.options[i].selected) {
+                selection.push(ev.target.options[i].value);
+            }
+        };
+
+        this.setState({defValue:selection})
     },
 
     render: function () {
@@ -231,7 +301,7 @@ var EditableSelectInput = React.createClass({
             );
         }.bind(this));
         return (
-            <select name={this.props.fieldName} id="editableInput" value={this.state.defValue} onChange={this.handleChange}>
+            <select name={this.props.fieldName} id="editableInput" value={this.state.defValue} onChange={this.handleChange} multiple={this.props.fieldType == 'select' ? false : true}>
                 {selectNodes}
             </select>
         );
@@ -247,7 +317,18 @@ var EditableSelectInput = React.createClass({
  */
 var EditableStoreButton = React.createClass({
     handleStoreEvent: function (event) {
-        var val = document.getElementById('editableInput').value;
+        var element = document.getElementById('editableInput');
+
+        if (element.multiple) {
+            var val = [];
+            for (var i = element.options.length - 1; i >= 0; i--) {
+                if (element.options[i].selected) {
+                    val.push(element.options[i].value);
+                }
+            };
+        } else {
+            var val = element.value;
+        }
         var url = this.props.fieldUrl;
         var prop = this.props.fieldName;
 
