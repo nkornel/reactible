@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                 reporter: require('jshint-stylish')
             },
 
-            build: ['Gruntfile.js', 'src/customevent.js']
+            build: ['Gruntfile.js', 'src/customevent.js', 'src/axe.js', 'src/dataset.js']
         },
 
         babel: {
@@ -90,6 +90,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-string-replace');
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-babel');
 
     // Default task

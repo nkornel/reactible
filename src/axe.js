@@ -27,14 +27,14 @@
         };
 
         request.send();
-    }
+    };
 
     Axe.cut = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
-        if (header != null && header.length > 0) {
+        if (header !== null && header.length > 0) {
             for (var key in header) {
                 request.setRequestHeader(key, header[key]);
             }
@@ -53,14 +53,14 @@
         };
 
         request.send(data);
-    }
+    };
 
     Axe.slash = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
         request.open('PUT', url, true);
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
-        if (header != null && header.length > 0) {
+        if (header !== null && header.length > 0) {
             for (var key in header) {
                 request.setRequestHeader(key, header[key]);
             }
@@ -79,7 +79,7 @@
         };
 
         request.send(data);
-    }
+    };
 
     window.Axe = Axe;
 
