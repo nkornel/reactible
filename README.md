@@ -6,7 +6,7 @@ It is slightly based on the x-editable library.
 ## Project status
 Project is under active development for our current project.
 
-## The API (0.1.2)
+## The API (0.1.6)
 Reactible is working with ```data-attributes``` and the ```.reactible``` class on almost any kind of valid html tag.
 
 ### The default ```data-attributes``` for a reactible field are these:
@@ -25,7 +25,7 @@ During the planning phase we had in mind, that the component should be used in v
 * Directly from the view's session data
 * From a JSON endpoint via the ```data-fieldUrl``` attribute
 
-In case of the view's session data the editable field should know about the underlying data model, which is declared via the optional ```data-fieldModel``` attribute and ```data-fieldModelId``` attribute. It extracts the related value from the session data using the already defined ```data-fieldName``` attribute.
+In case of the view's session data the editable field receives it's default data from the session via the ```data-fieldValue``` attribute.
 
 In case of the JSON endpoint, we define the datasource through the ```data-fieldUrl``` attribute, which the field uses as the update endpoint. It extracts the default value from the endpoint based on the ```data-fieldName``` attribute, and updates the value using the same endpoint.
 

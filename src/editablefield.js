@@ -28,7 +28,7 @@
  */
 var EditableFieldBox = React.createClass({
     getInitialState: function () {
-        return {fieldValue: []};
+        return {fValue: []};
     },
     
     componentDidMount: function () {
@@ -67,13 +67,17 @@ var EditableFieldBox = React.createClass({
                 };
                 
                 //console.log(fieldVal); 
-                this.setState({fieldValue: fieldVal});
+                this.setState({fValue: fieldVal});
             }.bind(this));
         } else {
             // In case of text, textArea we just get and show.
-            Axe.grab(this.props.fieldUrl, function (res) {
-                this.setState({fieldValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName]});
-            }.bind(this));
+            if (this.props.fieldValue) {
+                this.setState({fValue: this.props.fieldValue});
+            } else {
+                Axe.grab(this.props.fieldUrl, function (res) {
+                    this.setState({fValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName]});
+                }.bind(this));
+            }
         }
     },
 
@@ -83,7 +87,6 @@ var EditableFieldBox = React.createClass({
             
             var formattedRes;
             var fieldVal = [];
-            this.context.selection = e.newValue;
 
             Axe.grab(this.props.fieldSource, function (res) {
                 formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
@@ -91,15 +94,15 @@ var EditableFieldBox = React.createClass({
                 // Treating the selection which is for some reason sometimes comes as a string.
                 // Must be traced...
                 var selection = [];
-                if (this.context.selection.constructor === Array &&
-                    this.context.selection[0].constructor !== Number) {
-                    for (var element in this.context.selection) {
-                        if (this.context.selection[element].constructor !== Number) {
-                            selection.push(Number(this.context.selection[element]));
+                if (e.newValue.constructor === Array &&
+                    e.newValue[0].constructor !== Number) {
+                    for (var element in e.newValue) {
+                        if (e.newValue[element].constructor !== Number) {
+                            selection.push(Number(e.newValue[element]));
                         }
                     }
-                } else if (this.context.selection.constructor !== Array) {
-                    selection = JSON.parse('['+this.context.selection+']');
+                } else if (e.newValue.constructor !== Array) {
+                    selection = JSON.parse('['+e.newValue+']');
                 }
 
                 var items = formattedRes.filter(function (obj) {
@@ -111,20 +114,20 @@ var EditableFieldBox = React.createClass({
                 };
                 
                 //console.log(fieldVal); 
-                this.setState({fieldValue: fieldVal});
-                delete this.context.selection;
+                this.setState({fValue: fieldVal});
+                delete e.newValue;
             }.bind(this));
         } else {
-            this.setState({fieldValue: e.newValue});
+            this.setState({fValue: e.newValue});
         }
     },
 
     render: function () {
         return (
             <div className="editableFieldBox">
-                <label for={this.props.fieldName}>{this.props.fieldTitle}</label>
+                <label htmlFor={this.props.fieldName}>{this.props.fieldTitle}</label>
                 <EditableField fieldType={this.props.fieldType} 
-                               fieldValue={this.state.fieldValue} 
+                               fieldValue={this.state.fValue} 
                                fieldUrl={this.props.fieldUrl}
                                fieldSource={this.props.fieldSource} 
                                fieldSelected={this.props.fieldSelected} 
@@ -153,11 +156,11 @@ var EditableField = React.createClass({
         if (fieldType === 'select-multiple') {
             var selectedNodes = this.props.fieldValue.map(function (node) {
                 return (
-                    <li class="selected_item" onClick={this.handleEditClick}>{node}</li>
+                    <li key={node} className="selected_item" onClick={this.handleEditClick}>{node}</li>
                 );
             }.bind(this));
 
-            return <div class="editableMultiple" className={this.state.viewStatus ? '' : 'hidden'}>
+            return <div className={this.state.viewStatus ? 'editableMultiple' : 'hidden editableMultiple'}>
                         <ul>
                         {selectedNodes}
                         </ul>
@@ -299,7 +302,7 @@ var EditableTextAreaInput = React.createClass({
 
 var EditableSelectInput = React.createClass({
     getInitialState: function () {
-        return {fieldData: [], defValue: 0};
+        return {fieldData: [], defValue: this.props.fieldType == 'select' ? 0 : []};
     },
 
     componentDidMount: function () {
