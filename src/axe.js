@@ -18,6 +18,15 @@
         },
         hasRequestToken: function () {
             return typeof this._token === 'undefined' ? false : true;
+        },
+        setRequestContentType: function (_contentType) {
+            this._contentType = _contentType;
+        },
+        getRequestContentType: function () {
+            return this._contentType;
+        },
+        hasRequestContentType: function () {
+            return typeof this._contentType === 'undefined' ? false:true;
         }
     };
 
@@ -44,7 +53,7 @@
     Axe.cut = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        request.setRequestHeader('Content-Type', Axe.configuration.hasRequestContentType() ? Axe.configuration.getRequestContentType() : 'application/x-www-form-urlencoded');
 
         if (header !== null && header.length > 0) {
             for (var key in header) {
@@ -74,7 +83,7 @@
     Axe.slash = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
         request.open('PUT', url, true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        request.setRequestHeader('Content-Type', Axe.configuration.hasRequestContentType() ? Axe.configuration.getRequestContentType() : 'application/x-www-form-urlencoded');
 
         if (header !== null && header.length > 0) {
             for (var key in header) {
@@ -98,7 +107,11 @@
             return callback('connection_error');
         };
 
-        request.send(data);
+        if (Axe.configuration.hasRequestContentType() && Axe.configuration.getRequestContentType === 'application/json') {
+            request.send(JSON.stringify(data));
+        } else {
+            request.send(data);
+        }
     };
 
     window.Axe = Axe;
