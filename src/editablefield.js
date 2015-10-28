@@ -124,16 +124,13 @@ var EditableFieldBox = React.createClass({
 
     render: function () {
         return (
-            <div className="editableFieldBox">
-                <label htmlFor={this.props.fieldName}>{this.props.fieldTitle}</label>
-                <EditableField fieldType={this.props.fieldType} 
-                               fieldValue={this.state.fValue} 
-                               fieldUrl={this.props.fieldUrl}
-                               fieldSource={this.props.fieldSource} 
-                               fieldSelected={this.props.fieldSelected} 
-                               fieldName={this.props.fieldName}
-                               dataUpdatedCallback={this.dataUpdated} />
-            </div>
+            <EditableField fieldType={this.props.fieldType} 
+                           fieldValue={this.state.fValue} 
+                           fieldUrl={this.props.fieldUrl}
+                           fieldSource={this.props.fieldSource} 
+                           fieldSelected={this.props.fieldSelected} 
+                           fieldName={this.props.fieldName}
+                           dataUpdatedCallback={this.dataUpdated} />
         );
     }
 });
@@ -186,18 +183,18 @@ var EditableField = React.createClass({
 
     render: function () {
         return (
-            <div className="editableField">
-                {this.checkType(this.props.fieldType)}
+            <div>
+                {this.checkType()}
                 <EditableEditBox viewStatus={this.state.viewStatus} 
-                                 fieldType={this.props.fieldType} 
-                                 fieldValue={this.props.fieldValue}
-                                 fieldUrl={this.props.fieldUrl}
-                                 fieldSource={this.props.fieldSource} 
-                                 fieldName={this.props.fieldName} 
-                                 fieldSelected={this.props.fieldSelected}
-                                 callbackViewParent={this.handleCloseClick}
-                                 dataUpdatedCallback={this.handleDataUpdate} />
-            </div>
+                                fieldType={this.props.fieldType} 
+                                fieldValue={this.props.fieldValue}
+                                fieldUrl={this.props.fieldUrl}
+                                fieldSource={this.props.fieldSource} 
+                                fieldName={this.props.fieldName} 
+                                fieldSelected={this.props.fieldSelected}
+                                callbackViewParent={this.handleCloseClick}
+                                dataUpdatedCallback={this.handleDataUpdate} />
+            </div>         
         );
     }
 });
@@ -278,7 +275,7 @@ var EditableTextInput = React.createClass({
     },
 
     render: function () {            
-        return <input type={this.props.fieldType} name={this.props.fieldName} value={this.state.fieldValue} onChange={this.handleChange} id="editableInput" />
+        return <input type={this.props.fieldType} name={this.props.fieldName} value={this.state.fieldValue} onChange={this.handleChange} className="form-control" id="editableInput" />
     }
 });
 
@@ -345,7 +342,7 @@ var EditableSelectInput = React.createClass({
  */
 var EditableStoreButton = React.createClass({
     handleStoreEvent: function (event) {
-        var element = event.target.previousSibling;
+        var element = event.target.previousSibling ? event.target.previousSibling : event.target.parentNode.previousSibling;
 
         if (element.multiple) {
             var val = [];
@@ -375,7 +372,7 @@ var EditableStoreButton = React.createClass({
     },
 
     render: function () {
-        return <button type="button" className="editableStoreButton" onClick={this.handleStoreEvent}>Save</button>;
+        return <button type="button" className="editableStoreButton btn btn-primary" onClick={this.handleStoreEvent}><i className="mdi-navigation-check"></i></button>;
     }
 });
 
@@ -390,7 +387,7 @@ var EditableCancelButton = React.createClass({
     },
 
     render: function () {
-        return <button type="button" className="editableCancelButton" onClick={this.handleClosing}>Cancel</button>;
+        return <button type="button" className="editableCancelButton btn btn-default" onClick={this.handleClosing}><i className="mdi-navigation-close"></i></button>;
     }
 });
 

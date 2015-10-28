@@ -125,22 +125,13 @@ var EditableFieldBox = React.createClass({
     },
 
     render: function render() {
-        return React.createElement(
-            'div',
-            { className: 'editableFieldBox' },
-            React.createElement(
-                'label',
-                { htmlFor: this.props.fieldName },
-                this.props.fieldTitle
-            ),
-            React.createElement(EditableField, { fieldType: this.props.fieldType,
-                fieldValue: this.state.fValue,
-                fieldUrl: this.props.fieldUrl,
-                fieldSource: this.props.fieldSource,
-                fieldSelected: this.props.fieldSelected,
-                fieldName: this.props.fieldName,
-                dataUpdatedCallback: this.dataUpdated })
-        );
+        return React.createElement(EditableField, { fieldType: this.props.fieldType,
+            fieldValue: this.state.fValue,
+            fieldUrl: this.props.fieldUrl,
+            fieldSource: this.props.fieldSource,
+            fieldSelected: this.props.fieldSelected,
+            fieldName: this.props.fieldName,
+            dataUpdatedCallback: this.dataUpdated });
     }
 });
 
@@ -204,8 +195,8 @@ var EditableField = React.createClass({
     render: function render() {
         return React.createElement(
             'div',
-            { className: 'editableField' },
-            this.checkType(this.props.fieldType),
+            null,
+            this.checkType(),
             React.createElement(EditableEditBox, { viewStatus: this.state.viewStatus,
                 fieldType: this.props.fieldType,
                 fieldValue: this.props.fieldValue,
@@ -299,7 +290,7 @@ var EditableTextInput = React.createClass({
     },
 
     render: function render() {
-        return React.createElement('input', { type: this.props.fieldType, name: this.props.fieldName, value: this.state.fieldValue, onChange: this.handleChange, id: 'editableInput' });
+        return React.createElement('input', { type: this.props.fieldType, name: this.props.fieldName, value: this.state.fieldValue, onChange: this.handleChange, className: 'form-control', id: 'editableInput' });
     }
 });
 
@@ -374,7 +365,7 @@ var EditableStoreButton = React.createClass({
     displayName: 'EditableStoreButton',
 
     handleStoreEvent: function handleStoreEvent(event) {
-        var element = event.target.previousSibling;
+        var element = event.target.previousSibling ? event.target.previousSibling : event.target.parentNode.previousSibling;
 
         if (element.multiple) {
             var val = [];
@@ -406,8 +397,8 @@ var EditableStoreButton = React.createClass({
     render: function render() {
         return React.createElement(
             'button',
-            { type: 'button', className: 'editableStoreButton', onClick: this.handleStoreEvent },
-            'Save'
+            { type: 'button', className: 'editableStoreButton btn btn-primary', onClick: this.handleStoreEvent },
+            React.createElement('i', { className: 'mdi-navigation-check' })
         );
     }
 });
@@ -427,8 +418,8 @@ var EditableCancelButton = React.createClass({
     render: function render() {
         return React.createElement(
             'button',
-            { type: 'button', className: 'editableCancelButton', onClick: this.handleClosing },
-            'Cancel'
+            { type: 'button', className: 'editableCancelButton btn btn-default', onClick: this.handleClosing },
+            React.createElement('i', { className: 'mdi-navigation-close' })
         );
     }
 });
