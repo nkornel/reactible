@@ -6,7 +6,6 @@ for (var i = editableFieldContainers.length - 1; i >= 0; i--) {
     
     ReactDOM.render(
         <EditableFieldBox 
-        fieldTitle={editableFieldContainers[i].dataset.fieldtitle}
         fieldName={editableFieldContainers[i].dataset.fieldname}
         fieldType={editableFieldContainers[i].dataset.fieldtype}
         fieldValue={editableFieldContainers[i].dataset.fieldvalue}
