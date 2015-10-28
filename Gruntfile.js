@@ -53,7 +53,7 @@ module.exports = function (grunt) {
         },
 
         watch: {
-            files: ['src/editablefield.js','src/renderer.js'],
+            files: ['src/editablefield.js','src/renderer.js','src/axe.js'],
             tasks: ['babel']
         },
 

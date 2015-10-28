@@ -9,6 +9,18 @@
 
     Axe = function () {};
 
+    Axe.configuration = {
+        setRequestToken: function (_token) {
+            this._token = _token;
+        },
+        getRequestToken: function () {
+            return this._token;
+        },
+        hasRequestToken: function () {
+            return typeof this._token === 'undefined' ? false : true;
+        }
+    };
+
     Axe.grab = function (url, callback) {
         var request = new XMLHttpRequest();
 
@@ -40,6 +52,10 @@
             }
         }
 
+        if (Axe.configuration.hasRequestToken()) {
+            request.setRequestHeader('X-CSRF-TOKEN', Axe.configuration.getRequestToken());
+        }
+
         request.onload = function () {
             if (request.status >= 200 && request.status < 400) {
                 return callback(request.responseText);
@@ -64,6 +80,10 @@
             for (var key in header) {
                 request.setRequestHeader(key, header[key]);
             }
+        }
+
+        if (Axe.configuration.hasRequestToken()) {
+            request.setRequestHeader('X-CSRF-TOKEN', Axe.configuration.getRequestToken());
         }
 
         request.onload = function () {
