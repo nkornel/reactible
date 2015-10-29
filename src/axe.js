@@ -30,6 +30,19 @@
         }
     };
 
+    Axe.encodeObject = function (object) {
+        var encodedString = '';
+        for (var prop in object) {
+            if (object.hasOwnProperty(prop)) {
+                if (encodedString.length > 0) {
+                    encodedString += '&';
+                }
+                encodedString += encodeURI(prop + '=' + object[prop]);
+            }
+        }
+        return encodedString;
+    };
+
     Axe.grab = function (url, callback) {
         var request = new XMLHttpRequest();
 
@@ -53,7 +66,7 @@
     Axe.cut = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
         request.open('POST', url, true);
-        request.setRequestHeader('Content-Type', Axe.configuration.hasRequestContentType() ? Axe.configuration.getRequestContentType() : 'application/x-www-form-urlencoded');
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
         if (header !== null && header.length > 0) {
             for (var key in header) {
@@ -77,12 +90,12 @@
             return callback('connection_error');
         };
 
-        request.send(data);
+        request.send(Axe.encodeObject(data));
     };
 
     Axe.slash = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
-        request.open('PUT', url, true);
+        request.open('PUT', url);
         request.setRequestHeader('Content-Type', Axe.configuration.hasRequestContentType() ? Axe.configuration.getRequestContentType() : 'application/x-www-form-urlencoded');
 
         if (header !== null && header.length > 0) {
@@ -97,7 +110,7 @@
 
         request.onload = function () {
             if (request.status >= 200 && request.status < 400) {
-                return callback(request.responseText);
+                return callback(JSON.parse(request.responseText));
             } else {
                 return callback('error');
             }
@@ -107,11 +120,7 @@
             return callback('connection_error');
         };
 
-        if (Axe.configuration.hasRequestContentType() && Axe.configuration.getRequestContentType === 'application/json') {
-            request.send(JSON.stringify(data));
-        } else {
-            request.send(data);
-        }
+        request.send(JSON.stringify(data));        
     };
 
     window.Axe = Axe;
