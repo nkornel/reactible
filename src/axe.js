@@ -96,7 +96,7 @@
     Axe.slash = function (url, data, header, callback) {
         var request = new XMLHttpRequest();
         request.open('PUT', url);
-        request.setRequestHeader('Content-Type', Axe.configuration.hasRequestContentType() ? Axe.configuration.getRequestContentType() : 'application/x-www-form-urlencoded');
+        request.setRequestHeader('Content-Type', Axe.configuration.hasRequestContentType() ? Axe.configuration.getRequestContentType() : 'application/json');
 
         if (header !== null && header.length > 0) {
             for (var key in header) {
