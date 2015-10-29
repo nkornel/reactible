@@ -386,14 +386,7 @@ var EditableStoreButton = React.createClass({
             return false;
         }
 
-        var data = {
-            'name': prop,
-            'value': val
-        };
-
-        data = JSON.stringify(data);
-
-        Axe.slash(url, data, null, (function (res) {
+        Axe.slash(url, { name: prop, value: val }, null, (function (res) {
             //alert('Success!');
             setTimeout((function () {
                 this.props.dataUpdatedCallback({ 'newValue': val });
