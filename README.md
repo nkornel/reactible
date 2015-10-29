@@ -6,7 +6,7 @@ It is slightly based on the x-editable library.
 ## Project status
 Project is under active development for our current project.
 
-## The API (0.1.6)
+## The API
 Reactible is working with ```data-attributes``` and the ```.reactible``` class on almost any kind of valid html tag.
 
 ### The default ```data-attributes``` for a reactible field are these:
@@ -29,6 +29,9 @@ In case of the view's session data the editable field receives it's default data
 
 In case of the JSON endpoint, we define the datasource through the ```data-fieldUrl``` attribute, which the field uses as the update endpoint. It extracts the default value from the endpoint based on the ```data-fieldName``` attribute, and updates the value using the same endpoint.
 
+### The Axe library
+
+Reactible works with its own XMLHttpRequest library called Axe. Axe is able to handle ```GET```, ```POST``` and ```PUT``` request with pure XMLHttpRequest, and it has an own configuration object to define additional authentication ```TOKEN``` data and ```Content-Type``` parameters. Axe is available also trough the window object and it comes embedded with the component.
 
 
 ## License
