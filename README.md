@@ -6,6 +6,8 @@ It is slightly based on the x-editable library.
 ## Project status
 Project is under active development for our current project.
 
+*The component currently uses the ```bootstrap-material-design``` library, which is based on the ```materialize.css``` library and Google's *material design* principles. PLEASE DO NOT RELY ON THIS LIBRARY FOR FORMATTING SINCE IT CAN CHANGE IN FUTURE VERSIONS. INSTEAD USE PROPRIETY CSS TO OVERWRITE THE CSS SET.*
+
 ## The API
 Reactible is working with ```data-attributes``` and the ```.reactible``` class on almost any kind of valid html tag.
 
@@ -23,11 +25,13 @@ Reactible is working with ```data-attributes``` and the ```.reactible``` class o
 During the planning phase we had in mind, that the component should be used in various situations, and it should be able to handle those situations in a flexible manner, at least from the datasource point of view. So for the base we give it two basic forms of datasource:
 
 * Directly from the view's session data
-* From a JSON endpoint via the ```data-fieldUrl``` attribute
+* From a JSON endpoint via the ```data-fieldSource``` attribute
 
 In case of the view's session data the editable field receives it's default data from the session via the ```data-fieldValue``` attribute.
 
-In case of the JSON endpoint, we define the datasource through the ```data-fieldUrl``` attribute, which the field uses as the update endpoint. It extracts the default value from the endpoint based on the ```data-fieldName``` attribute, and updates the value using the same endpoint.
+In case of the JSON endpoint, we define the datasource through the ```data-fieldSource``` attribute, which the field uses as the update endpoint. It extracts the default value from the endpoint based on the ```data-fieldName``` attribute, and updates the value using the same endpoint.
+
+*Reactible verifies the data-source via two fields: ```data-fieldValue``` and ```data-fieldSource```. The ```data-fieldValue``` always has priority over ```data-fieldSource``` which means, that the component checks this field looking for source, and only if it is not provided, it tries to load the source from ```data-fieldSource```, which has to return a list of valid ```{key:value}``` pairs.*
 
 ### The Axe library
 
