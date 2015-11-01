@@ -50,28 +50,31 @@
 
               <br>
               <h4><b>Text Input (with fieldUrl defined for AJAX based default value)</b></h4>
-              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="text" data-fieldUrl="http://jsonplaceholder.typicode.com/posts/1"></div>
+              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="text" data-fieldUrl="test.php"></div>
 
-              <!--<br>
+              <br>
               <h4><b>Text Input (with session data default value)</b></h4>
-              <label>Test Label</label>
               <div class="reactible" data-fieldName="title" data-fieldType="text" data-fieldUrl="test.php" data-fieldValue="Test Session Data"></div>
 
               <br>
               <h4><b>Textarea Input</b></h4>
-              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="textarea" data-fieldUrl="http://jsonplaceholder.typicode.com/posts/1"></div>
+              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="textarea" data-fieldUrl="test.php"></div>
 
               <br />
-              <h4><b>Select Input</b></h4>
-              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="select" data-fieldSelected="3" data-fieldSource="http://jsonplaceholder.typicode.com/posts" data-fieldUrl="http://jsonplaceholder.typicode.com/posts/1"></div>-->
+              <h4><b>Select Input (JSON datasource)</b></h4>
+              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="select" data-fieldSelected="3" data-fieldSource="http://jsonplaceholder.typicode.com/posts" data-fieldUrl="test.php"></div>
                 
               <br />
-              <h4><b>Select Input (with session data default value)</b></h4>
-              <div class="reactible" data-fieldTitle="Select with JSON" data-fieldName="title" data-fieldType="select" data-fieldSelected="3" data-fieldSource='{"1":"Eper","2":"Dinnye","3":"Alma","4":"Körte"}' data-fieldUrl="test.php"></div>
+              <h4><b>Select Input (Session datasource, integer keys)</b></h4>
+              <div class="reactible" data-fieldTitle="Select with JSON" data-fieldName="title" data-fieldType="select" data-fieldSelected="3" data-fieldSource='{"1":"Scotch","2":"Whiskey","3":"Bourbon","4":"Vodka"}' data-fieldUrl="test.php"></div>
+              
+              <br />
+              <h4><b>Select Input (Session datasource, mixed keys)</b></h4>
+              <div class="reactible" data-fieldTitle="Letter Index" data-fieldName="title" data-fieldType="select" data-fieldSelected="A" data-fieldSource='{"A":"Scotch","B":"Whiskey","C":"Bourbon","4":"Vodka"}' data-fieldUrl="test.php"></div>
 
               <br />
-              <h4><b>Multiple Select Input (with session data default value)</b></h4>
-              <div class="reactible" data-fieldTitle="Colors" data-fieldName="title" data-fieldType="select-multiple" data-fieldSelected="[1,3]" data-fieldSource='{"1":"Eper","2":"Dinnye","3":"Alma","4":"Körte"}' data-fieldUrl="http://jsonplaceholder.typicode.com/posts/1"></div>
+              <h4><b>Multiple Select Input (Session datasource, integer keys)</b></h4>
+              <div class="reactible" data-fieldTitle="Colors" data-fieldName="title" data-fieldType="select-multiple" data-fieldSelected="[1,3]" data-fieldSource='{"1":"Scotch","2":"Whiskey","3":"Bourbon","4":"Vodka"}' data-fieldUrl="test.php"></div>
             </div>          
           </div>
         </div>

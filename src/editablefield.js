@@ -51,24 +51,14 @@ var EditableFieldBox = React.createClass({
                 if (this.props.fieldType === 'select-multiple') {
                     selected = JSON.parse(this.props.fieldSelected);
                 } else if (this.props.fieldSelected.constructor !== Array) {
-                    selected = JSON.parse('['+this.props.fieldSelected+']');
+                    selected = JSON.parse('["'+this.props.fieldSelected+'"]');
                 }
 
-                var items = [];
-
                 for (var i in list) {
-                    // This must work with Number type indexes and String type indexes too.
-                    var index;
-                    if (isNaN(parseInt(i))) {
-                        // string
-                        index = i;
-                    } else {
-                        // number
-                        index = parseInt(i);
-                    }
-                    if ( selected.indexOf(index) > -1 ) {
-                        fieldVal[i] = list[i];
-                    }
+                    for (var s in selected) {
+                        if (i == selected[s]) 
+                            fieldVal.push(list[i])
+                    };
                 }
                 
                 this.setState({fValue: fieldVal});
@@ -131,24 +121,16 @@ var EditableFieldBox = React.createClass({
                         }
                     }
                 } else if (e.newValue.constructor !== Array) {
-                    selected = JSON.parse('['+e.newValue+']');
+                    selected = JSON.parse('["'+e.newValue+'"]');
                 }
 
                 var items = [];
 
                 for (var i in list) {
-                    // This must work with Number type indexes and String type indexes too.
-                    var index;
-                    if (isNaN(parseInt(i))) {
-                        // string
-                        index = i;
-                    } else {
-                        // number
-                        index = parseInt(i);
-                    }
-                    if ( selected.indexOf(index) > -1 ) {
-                        fieldVal[i] = list[i];
-                    }
+                    for (var s in selected) {
+                        if (i == selected[s]) 
+                            fieldVal.push(list[i])
+                    };
                 }
                 
                 this.setState({fValue: fieldVal});
@@ -230,7 +212,7 @@ var EditableField = React.createClass({
                     </div>;
 
         } else {
-            return <span onClick={this.handleEditClick} className={this.state.viewStatus ? '' : 'hidden'}>{this.props.fieldValue}</span>;
+            return <span onClick={this.handleEditClick} className={this.state.viewStatus ? '' : 'hidden'}>{this.props.fieldValue.constructor === 'Array' ? this.props.fieldValue[0] : this.props.fieldValue}</span>;
         }
     },
 
