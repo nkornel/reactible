@@ -1,6 +1,6 @@
 {
   "name": "reactible",
-  "version":"0.1.122,
+  "version":"0.1.12",
   "homepage": "https://github.com/nkornel/reactible",
   "description": "A React.js based in-place plugin for html forms.",
   "main": "dist/js/reactible.min.js",
