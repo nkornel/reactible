@@ -31,8 +31,6 @@ In case of the view's session data the editable field receives it's default data
 
 In case of the JSON endpoint, we define the datasource through the ```data-fieldSource``` attribute, which the field uses as the update endpoint. It extracts the default value from the endpoint based on the ```data-fieldName``` attribute, and updates the value using the same endpoint.
 
-*Reactible verifies the data-source via two fields: ```data-fieldValue``` and ```data-fieldSource```. The ```data-fieldValue``` always has priority over ```data-fieldSource``` which means, that the component checks this field looking for source, and only if it is not provided, it tries to load the source from ```data-fieldSource```, which has to return a list of valid ```{key:value}``` pairs.*
-
 ### The Axe library
 
 Reactible works with its own XMLHttpRequest library called Axe. Axe is able to handle ```GET```, ```POST``` and ```PUT``` request with pure XMLHttpRequest, and it has an own configuration object to define additional authentication ```TOKEN``` data and ```Content-Type``` parameters. Axe is available also trough the window object and it comes embedded with the component.

@@ -113,14 +113,11 @@ var EditableFieldBox = React.createClass({
                 var list = JSON.parse(this.props.fieldSource);
                 
                 var selected = [];
-                if (e.newValue.constructor === Array &&
-                    e.newValue[0].constructor !== Number) {
+                if (e.newValue.constructor === Array) {
                     for (var element in e.newValue) {
-                        if (e.newValue[element].constructor !== Number) {
-                            selected.push(Number(e.newValue[element]));
-                        }
+                        selected.push(e.newValue[element]);
                     }
-                } else if (e.newValue.constructor !== Array) {
+                } else {
                     selected = JSON.parse('["'+e.newValue+'"]');
                 }
 
@@ -138,17 +135,12 @@ var EditableFieldBox = React.createClass({
                 Axe.grab(this.props.fieldSource, function (res) {
                     formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
 
-                    // Treating the selection which is for some reason sometimes comes as a string.
-                    // Must be traced...
                     var selection = [];
-                    if (e.newValue.constructor === Array &&
-                        e.newValue[0].constructor !== Number) {
+                    if (e.newValue.constructor === Array) {
                         for (var element in e.newValue) {
-                            if (e.newValue[element].constructor !== Number) {
-                                selection.push(Number(e.newValue[element]));
-                            }
+                            selection.push(e.newValue[element]);
                         }
-                    } else if (e.newValue.constructor !== Array) {
+                    } else {
                         selection = JSON.parse('['+e.newValue+']');
                     }
 
