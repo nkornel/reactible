@@ -53,9 +53,9 @@ var EditableFieldBox = React.createClass({
 
                 var selected = [];
                 if (this.props.fieldType === 'select-multiple') {
-                    selected = JSON.parse(this.props.fieldSelected);
+                    selected = this.props.fieldSelected && this.props.fieldSelected !== '!EMPTY!' ? JSON.parse(this.props.fieldSelected) : [];
                 } else if (this.props.fieldSelected.constructor !== Array) {
-                    selected = JSON.parse('["' + this.props.fieldSelected + '"]');
+                    selected = this.props.fieldSelected !== '!EMPTY!' ? JSON.parse('["' + this.props.fieldSelected + '"]') : [];
                 }
 
                 for (var i in list) {
@@ -64,7 +64,7 @@ var EditableFieldBox = React.createClass({
                     };
                 }
 
-                this.setState({ fValue: fieldVal });
+                this.setState({ fValue: fieldVal.length == 0 ? ['Select an option...'] : fieldVal });
             } else if (this.props.fieldSource) {
                 Axe.grab(this.props.fieldSource, (function (res) {
                     formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
@@ -94,8 +94,10 @@ var EditableFieldBox = React.createClass({
             }
         } else {
             // In case of text, textArea we just get and show.
-            if (this.props.fieldValue) {
+            if (this.props.fieldValue && this.props.fieldValue !== '!EMPTY!') {
                 this.setState({ fValue: this.props.fieldValue });
+            } else if (this.props.fieldValue && this.props.fieldValue === '!EMPTY!') {
+                this.setState({ fValue: this.props.fieldName });
             } else {
                 Axe.grab(this.props.fieldUrl, (function (res) {
                     this.setState({ fValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName] });
@@ -212,8 +214,9 @@ var EditableField = React.createClass({
         } else {
             return React.createElement(
                 'span',
-                { onClick: this.handleEditClick, className: this.state.viewStatus ? '' : 'hidden' },
-                this.props.fieldValue.constructor === 'Array' ? this.props.fieldValue[0] : this.props.fieldValue
+                { onClick: this.handleEditClick,
+                    className: this.state.viewStatus ? '' : 'hidden' },
+                this.props.fieldValue && this.props.fieldValue.constructor === 'Array' ? this.props.fieldValue[0] : this.props.fieldValue
             );
         }
     },
@@ -492,7 +495,9 @@ var EditableStoreButton = React.createClass({
 var EditableCancelButton = React.createClass({
     displayName: 'EditableCancelButton',
 
-    handleClosing: function handleClosing() {
+    handleClosing: function handleClosing(e) {
+        var element = e.target.previousSibling ? e.target.previousSibling : e.target.parentNode.previousSibling.previousSibling;
+        element.classList.remove('reactible-invalid');
         this.props.callbackParent();
     },
 

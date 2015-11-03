@@ -25,7 +25,7 @@
 
       .reactible-invalid {
         border-color: red;
-        color: white;
+        border-width: 2px;
       }
    
     </style>
@@ -49,14 +49,14 @@
               <h3 class="header">Reactible control examples:</h3>
 
               <br>
-              <h4><b>Text Input (with fieldUrl defined for AJAX based default value)</b></h4>
-              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="text" data-fieldUrl="test.php?query=title"></div>
+              <!--<h4><b>Text Input (with fieldUrl defined for AJAX based default value)</b></h4>
+              <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="text" data-fieldUrl="test.php?query=title" data-fieldValue=""></div>-->
 
               <br>
               <h4><b>Text Input (with session data default value)</b></h4>
-              <div class="reactible" data-fieldName="title" data-fieldType="text" data-fieldUrl="test.php" data-fieldValue="Test Session Data"></div>
+              <div class="reactible" data-fieldName="title" data-fieldType="text" data-fieldUrl="test.php" data-fieldValue="!EMPTY!"></div>
 
-              <br>
+              <!--<br>
               <h4><b>Textarea Input (with fieldUrl defined for AJAX based default value)</b></h4>
               <div class="reactible" data-fieldTitle="Title" data-fieldName="title" data-fieldType="textarea" data-fieldUrl="test.php?query=title"></div>
 
@@ -72,9 +72,9 @@
               <h4><b>Select Input (Session datasource, mixed keys)</b></h4>
               <div class="reactible" data-fieldTitle="Letter Index" data-fieldName="title" data-fieldType="select" data-fieldSelected="A" data-fieldSource='{"A":"Scotch","B":"Whiskey","C":"Bourbon","4":"Vodka"}' data-fieldUrl="test.php"></div>
 
-              <br />
+              <br />-->
               <h4><b>Multiple Select Input (Session datasource, integer keys)</b></h4>
-              <div class="reactible" data-fieldTitle="Colors" data-fieldName="title" data-fieldType="select-multiple" data-fieldSelected="[1,3]" data-fieldSource='{"1":"Scotch","2":"Whiskey","3":"Bourbon","4":"Vodka"}' data-fieldUrl="test.php"></div>
+              <div class="reactible" data-fieldTitle="Colors" data-fieldName="title" data-fieldType="select-multiple" data-fieldSelected="" data-fieldSource='{"1":"Scotch","2":"Whiskey","3":"Bourbon","4":"Vodka"}' data-fieldUrl="test.php"></div>
             </div>          
           </div>
         </div>
