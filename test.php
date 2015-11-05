@@ -27,5 +27,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resp = curl_exec($curl);
     curl_close($curl);
 
-    echo json_encode([explode('=', $_SERVER['QUERY_STRING'])[1] => $resp]);
+    //echo json_encode([explode('=', $_SERVER['QUERY_STRING'])[1] => $resp]);
+    echo json_encode([1=>"Test",2=>"Fake"]);
 }

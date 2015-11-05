@@ -77,9 +77,26 @@ var EditableFieldBox = React.createClass({
                     }
                     //var selected = this.props.fieldSelected.indexOf('[') === -1 ? JSON.parse('["'+this.props.fieldSelected+'"]') : JSON.parse(this.props.fieldSelected);
 
-                    var items = formattedRes.filter(function (obj) {
-                        return selected.indexOf(obj.id) > -1
-                    });
+                    // After parsing the formattedRes can be an Object that has to be flatten.
+                    var items = [];
+
+                    if (formattedRes.constructor == Object) {
+
+                        for (var i in formattedRes) {
+                            var element = {};
+                            element["id"] = i;
+                            element[this.props.fieldName] = formattedRes[i];
+                            items.push(element);
+                        }
+
+                        items = items.filter(function (obj) {
+                            return selected.toString().indexOf(obj.id.toString()) > -1
+                        });
+                    } else {
+                        items = formattedRes.filter(function (obj) {
+                            return selected.toString().indexOf(obj.id.toString()) > -1
+                        });
+                    }
 
                     for (var i = items.length - 1; i >= 0; i--) {
                         fieldVal.push(items[i][this.props.fieldName]);
@@ -145,13 +162,34 @@ var EditableFieldBox = React.createClass({
                         selection = JSON.parse('['+e.newValue+']');
                     }
 
-                    var items = formattedRes.filter(function (obj) {
-                        return selection.indexOf(obj.id) > -1
-                    });
+                    // After parsing the formattedRes can be an Object that has to be flatten.
+                    var items = [];
 
-                    for (var i = items.length - 1; i >= 0; i--) {
-                        fieldVal.push(items[i][this.props.fieldName]);
-                    };
+                    if (formattedRes.constructor == Object) {
+
+                        for (var i in formattedRes) {
+                            var element = {};
+                            element["id"] = i;
+                            element[this.props.fieldName] = formattedRes[i];
+                            items.push(element);
+                        }
+
+                        items = items.filter(function (obj) {
+                            return selection.toString().indexOf(obj.id.toString()) > -1
+                        });
+                    } else {
+                        items = formattedRes.filter(function (obj) {
+                            return selection.toString().indexOf(obj.id.toString()) > -1
+                        });
+                    }
+
+                    if (e.newValue !== "null") {
+                        for (var i = items.length - 1; i >= 0; i--) {
+                            fieldVal.push(items[i][this.props.fieldName]);
+                        };  
+                    } else {
+                        fieldVal.push("Select an option...");
+                    }
                     
                     //console.log(fieldVal); 
                     this.setState({fValue: fieldVal});
@@ -362,8 +400,22 @@ var EditableSelectInput = React.createClass({
             });
         } else {
             Axe.grab(this.props.fieldSource, function (res) {
+                var formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
+                var items = [];
+                if (formattedRes.constructor == Object) {
+                    for (var i in formattedRes) {
+                        var element = {};
+                        element["id"] = i;
+                        element[this.props.fieldName] = formattedRes[i];
+                        items.push(element);
+                    }
+                } else {
+                    items = formattedRes;
+                }
+
+
                 this.setState({
-                    fieldData: typeof res == 'string' ? JSON.parse(res) : res, 
+                    fieldData: items,
                     defValue: this.props.fieldSelected
                 });
             }.bind(this));
@@ -397,6 +449,19 @@ var EditableSelectInput = React.createClass({
                 );
             }.bind(this));
         } else {
+            // Check if object or array. If object turn into an array.
+            if (this.state.fieldData.constructor == Object) {
+                var arr = Object.keys(this.state.fieldData).map (function (k) {
+                    return {k: this.state.fieldData[k]};
+                }.bind(this));
+
+                if (arr.length > 0) {
+                    this.state.fieldData = arr;
+                } else {
+                    this.state.fieldData = [];
+                }
+            }
+            //var arr = Object.keys(obj).map(function(k) { return obj[k] });
             var selectNodes = this.state.fieldData.map(function (node) {
                 return (
                     <option key={node.id} value={node.id}>{node[this.props.fieldName]}</option>
@@ -442,9 +507,10 @@ var EditableStoreButton = React.createClass({
 
         if (val.length === 0) {
             //alert('Please fill the field');
-            element.classList.add('reactible-invalid');
+            //element.classList.add('reactible-invalid');
 
-            return false;
+            //return false;
+            val = "null";
         }
  
         Axe.slash(url, {name:prop,value:val}, null, function (res) {
