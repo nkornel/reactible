@@ -149,6 +149,8 @@ var EditableFieldBox = React.createClass({
                     };
                 }
 
+                if (fieldVal.length === 0) fieldVal.push("Select an option...");
+
                 this.setState({ fValue: fieldVal });
             } else if (this.props.fieldSource) {
                 // Just to check if it has something...   

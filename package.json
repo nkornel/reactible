@@ -1,6 +1,6 @@
 {
   "name": "reactible",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "A React.js based in-place plugin for html forms.",
   "main": "dist/js/reactible.min.js",
   "directories": {
