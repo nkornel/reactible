@@ -185,7 +185,7 @@ var EditableFieldBox = React.createClass({
                         });
                     }
 
-                    if (e.newValue !== "null") {
+                    if (e.newValue !== "") {
                         for (var i = items.length - 1; i >= 0; i--) {
                             fieldVal.push(items[i][this.props.fieldName]);
                         };
@@ -199,7 +199,11 @@ var EditableFieldBox = React.createClass({
                 }).bind(this));
             }
         } else {
-            this.setState({ fValue: e.newValue });
+            if (e.newValue !== "") {
+                this.setState({ fValue: e.newValue });
+            } else {
+                this.setState({ fValue: "Enter a value..." });
+            }
         }
     },
 
@@ -532,7 +536,7 @@ var EditableStoreButton = React.createClass({
             //element.classList.add('reactible-invalid');
 
             //return false;
-            val = "null";
+            val = "";
         }
 
         Axe.slash(url, { name: prop, value: val }, null, (function (res) {
