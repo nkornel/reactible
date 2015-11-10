@@ -402,7 +402,7 @@ var EditableSelectInput = React.createClass({
         if (this.props.fieldSource.indexOf('{') > -1 && this.props.fieldSource.indexOf('}') > -1) {
             this.setState({
                 fieldData: JSON.parse(this.props.fieldSource),
-                defValue: this.props.fieldSelected
+                defValue: JSON.parse(this.props.fieldSelected)
             });
         } else {
             Axe.grab(this.props.fieldSource, function (res) {
