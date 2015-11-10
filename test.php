@@ -2,7 +2,9 @@
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    var_dump($_POST['name']);
+    //var_dump($_POST['name']);
+
+    echo json_encode(["errors"=>["The value field is required."]]);
 
 } else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
@@ -16,6 +18,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     echo $putdata;
 
+    //echo json_encode(["errors"=>["The value field is required."]]);
+
 } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     $curl = curl_init();
@@ -28,5 +32,5 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     curl_close($curl);
 
     //echo json_encode([explode('=', $_SERVER['QUERY_STRING'])[1] => $resp]);
-    echo json_encode([1=>"Test",2=>"Fake"]);
+    echo json_encode(["account"=>"account","meta"=>"meta"]);
 }

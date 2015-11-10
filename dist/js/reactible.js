@@ -106,7 +106,7 @@ var EditableFieldBox = React.createClass({
                     };
 
                     //console.log(fieldVal);
-                    this.setState({ fValue: fieldVal });
+                    this.setState({ fValue: fieldVal.length == 0 ? ['Select an option...'] : fieldVal });
                 }).bind(this));
             }
         } else {
@@ -114,10 +114,10 @@ var EditableFieldBox = React.createClass({
             if (this.props.fieldValue && this.props.fieldValue !== '!EMPTY!') {
                 this.setState({ fValue: this.props.fieldValue });
             } else if (this.props.fieldValue && this.props.fieldValue === '!EMPTY!') {
-                this.setState({ fValue: this.props.fieldName });
+                this.setState({ fValue: "Enter a value..." });
             } else {
                 Axe.grab(this.props.fieldUrl, (function (res) {
-                    this.setState({ fValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : res[this.props.fieldName] });
+                    this.setState({ fValue: typeof res == 'string' ? JSON.parse(res)[this.props.fieldName] : "Enter a value..." });
                 }).bind(this));
             }
         }
@@ -163,7 +163,7 @@ var EditableFieldBox = React.createClass({
                             selection.push(e.newValue[element]);
                         }
                     } else {
-                        selection = JSON.parse('[' + e.newValue + ']');
+                        selection = JSON.parse('["' + e.newValue + '"]');
                     }
 
                     // After parsing the formattedRes can be an Object that has to be flatten.
@@ -366,7 +366,7 @@ var EditableTextInput = React.createClass({
     displayName: 'EditableTextInput',
 
     getInitialState: function getInitialState() {
-        return { fieldValue: [] };
+        return { fieldValue: [], errors: [] };
     },
 
     handleChange: function handleChange(event) {
@@ -379,7 +379,7 @@ var EditableTextInput = React.createClass({
 
     render: function render() {
         return React.createElement('input', { type: this.props.fieldType,
-            'data-error-hint': 'Required field',
+            'data-error-hint': this.state.errors,
             name: this.props.fieldName,
             value: this.state.fieldValue,
             onChange: this.handleChange,
@@ -519,6 +519,7 @@ var EditableStoreButton = React.createClass({
 
     handleStoreEvent: function handleStoreEvent(event) {
         var element = event.target.previousSibling ? event.target.previousSibling : event.target.parentNode.previousSibling;
+        var elEvent = event;
 
         if (element.multiple) {
             var val = [];
@@ -543,6 +544,12 @@ var EditableStoreButton = React.createClass({
 
         Axe.slash(url, { name: prop, value: val }, null, (function (res) {
             //alert('Success!');
+            if (typeof res.errors !== 'undefined') {
+                element.classList.add('reactible-invalid');
+                console.log(elEvent);
+                return false;
+            }
+
             setTimeout((function () {
                 this.props.dataUpdatedCallback({ 'newValue': val });
             }).bind(this), 500);
