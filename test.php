@@ -32,5 +32,5 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     curl_close($curl);
 
     //echo json_encode([explode('=', $_SERVER['QUERY_STRING'])[1] => $resp]);
-    echo json_encode(["account"=>"account","meta"=>"meta"]);
+    echo json_encode([1=>"account",2=>"meta"]);
 }

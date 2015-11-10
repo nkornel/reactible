@@ -73,7 +73,7 @@ var EditableFieldBox = React.createClass({
                     if (this.props.fieldType === 'select-multiple') {
                         selected = JSON.parse(this.props.fieldSelected);
                     } else if (this.props.fieldSelected.constructor !== Array) {
-                        selected = JSON.parse('['+this.props.fieldSelected+']');
+                        selected = JSON.parse('["'+this.props.fieldSelected+'"]');
                     }
                     //var selected = this.props.fieldSelected.indexOf('[') === -1 ? JSON.parse('["'+this.props.fieldSelected+'"]') : JSON.parse(this.props.fieldSelected);
 
