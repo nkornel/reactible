@@ -400,12 +400,14 @@ var EditableSelectInput = React.createClass({
 
     componentDidMount: function () {
         if (this.props.fieldSource.indexOf('{') > -1 && this.props.fieldSource.indexOf('}') > -1) {
-            if (this.props.fieldSelected.indexOf('[') == -1 && this.props.fieldSelected.indexOf(']') == -1) {
-                this.props.fieldSelected = '["'+this.props.fieldSelected+'"]';
+            var formattedSelectedField = this.props.fieldSelected;
+
+            if (formattedSelectedField.indexOf('[') == -1 && formattedSelectedField.indexOf(']') == -1) {
+                formattedSelectedField = '["'+this.props.fieldSelected+'"]';
             }
             this.setState({
                 fieldData: JSON.parse(this.props.fieldSource),
-                defValue: JSON.parse(this.props.fieldSelected)
+                defValue: JSON.parse(formattedSelectedField)
             });
         } else {
             Axe.grab(this.props.fieldSource, function (res) {

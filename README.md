@@ -32,7 +32,7 @@ In case of the view's session data the editable field receives it's default data
 In case of the JSON endpoint, we define the datasource through the ```data-fieldSource``` attribute, which the field uses as the update endpoint. It extracts the default value from the endpoint based on the ```data-fieldName``` attribute, and updates the value using the same endpoint.
 
 ### Validation
-When click happens on the editable field for submit the value, it passes through the Axe library and while on returning it verifies the response for an ```error``` array. If it has indeed this array, the component injects a ```<span>``` tag with the ```innerHTML``` set for the error text from the ```errors``` array. The ```<span>``` tag also receives the ```reactible-error``` class for better styling possibilites.
+When click happens on the editable field for submit the value, it passes through the Axe library and while on returning it verifies the response for an ```errors``` array. If it has indeed this array, the component injects a ```<span>``` tag with the ```innerHTML``` set for the error text from the ```errors``` array. The ```<span>``` tag also receives the ```reactible-error``` class for better styling possibilites.
 
 ### The Axe library
 
