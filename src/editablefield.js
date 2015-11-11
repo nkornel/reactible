@@ -400,6 +400,9 @@ var EditableSelectInput = React.createClass({
 
     componentDidMount: function () {
         if (this.props.fieldSource.indexOf('{') > -1 && this.props.fieldSource.indexOf('}') > -1) {
+            if (this.props.fieldSelected.indexOf('[') == -1 && this.props.fieldSelected.indexOf(']') == -1) {
+                this.props.fieldSelected = '["'+this.props.fieldSelected+'"]';
+            }
             this.setState({
                 fieldData: JSON.parse(this.props.fieldSource),
                 defValue: JSON.parse(this.props.fieldSelected)
@@ -515,7 +518,7 @@ var EditableStoreButton = React.createClass({
         if (val.length === 0) {
             //alert('Please fill the field');
             //element.classList.add('reactible-invalid');
-
+            //console.log(element.parent);
             //return false;
             val = "";
         }
@@ -523,9 +526,32 @@ var EditableStoreButton = React.createClass({
         Axe.slash(url, {name:prop,value:val}, null, function (res) {
             //alert('Success!');
             if (typeof res.errors !== 'undefined') {
+                if (element.parentElement.querySelector('.reactible-error')) {
+                    var errElements = element.parentElement.querySelectorAll('.reactible-error');
+                    for (var i = 0; i < errElements.length; i++) {
+                        if (typeof errElements[i] !== 'undefined')
+                            errElements[i].remove();
+                    }
+                }
+
                 element.classList.add('reactible-invalid');
-                console.log(elEvent);
+                var errorElement = document.createElement('span');
+                for (var i in res.errors) {
+                    errorElement.innerHTML += res.errors[i] + " ";
+                }
+                errorElement.classList.add('reactible-error');
+                element.parentElement.appendChild(errorElement);
+                //console.log(elEvent);
                 return false;
+            }
+
+            if (element.parentElement.querySelector('.reactible-error')) {
+                element.classList.remove('reactible-invalid');
+                var errElements = element.parentElement.querySelectorAll('.reactible-error');
+                for (var i = 0; i < errElements.length; i++) {
+                    if (typeof errElements[i] !== 'undefined')
+                        errElements[i].remove();
+                }
             }
 
             setTimeout(function () {
@@ -548,6 +574,13 @@ var EditableCancelButton = React.createClass({
     handleClosing: function (e) {
         var element = e.target.previousSibling ? e.target.previousSibling : e.target.parentNode.previousSibling.previousSibling;
         element.classList.remove('reactible-invalid');
+        if (element.parentElement.querySelector('.reactible-error')) {
+            var errElements = element.parentElement.querySelectorAll('.reactible-error');
+            for (var i = 0; i < errElements.length; i++) {
+                if (typeof errElements[i] !== 'undefined')
+                    errElements[i].remove();
+            }
+        }
         this.props.callbackParent();
     },
 

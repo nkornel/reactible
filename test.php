@@ -16,9 +16,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     //header('Content-Type: application/json');
 
-    echo $putdata;
+    //echo $putdata;
 
-    //echo json_encode(["errors"=>["The value field is required."]]);
+    echo json_encode(["errors"=>["The value field is required."]]);
 
 } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
