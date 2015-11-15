@@ -148,7 +148,7 @@ var EditableFieldBox = React.createClass({
                     };
                 }
 
-                if (fieldVal.length === 0) fieldVal.push("Select an option...");
+                if (fieldVal.length === 0 || fieldVal[0] == "" || e.newValue == '!EMPTY!') fieldVal.push("Select an option...");
                 
                 this.setState({fValue: fieldVal});
             } else if (this.props.fieldSource) { // Just to check if it has something...    
@@ -185,7 +185,7 @@ var EditableFieldBox = React.createClass({
                         });
                     }
 
-                    if (e.newValue !== "") {
+                    if (e.newValue !== "" && e.newValue !== "!EMPTY!") {
                         for (var i = items.length - 1; i >= 0; i--) {
                             fieldVal.push(items[i][this.props.fieldName]);
                         };  
@@ -199,7 +199,7 @@ var EditableFieldBox = React.createClass({
                 }.bind(this));
             }
         } else {
-            if (e.newValue !== "") {
+            if (e.newValue !== "" && e.newValue !== "!EMPTY!") {
                 this.setState({fValue: e.newValue});
             } else {
                 this.setState({fValue: "Enter a value..."})

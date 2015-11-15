@@ -16,9 +16,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     //header('Content-Type: application/json');
 
-    //echo $putdata;
+    echo $putdata;
 
-    echo json_encode(["errors"=>["The value field is required."]]);
+    //echo json_encode(["errors"=>["The value field is required."]]);
 
 } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -32,5 +32,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     curl_close($curl);
 
     //echo json_encode([explode('=', $_SERVER['QUERY_STRING'])[1] => $resp]);
-    echo json_encode([1=>"account",2=>"meta"]);
+    //echo json_encode([1=>"account",2=>"meta"]);
+    echo json_encode(["!EMPTY!"=>"","A"=>"A","B"=>"B","C"=>"C"]);
 }
