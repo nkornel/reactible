@@ -150,12 +150,13 @@ var EditableFieldBox = React.createClass({
                         }
                     };
                 }
-
+                console.log('Above:' + fieldVal);
                 if (fieldVal.length === 0 || fieldVal[0] == "" || e.newValue == '!EMPTY!') {
                     fieldVal = [];
                     fieldVal.push("Select an option...");
+                    console.log('Inside:' + fieldVal);
                 }
-
+                console.log('Before setting up: ' + fieldVal);
                 this.setState({ fValue: fieldVal });
             } else if (this.props.fieldSource) {
                 // Just to check if it has something...   

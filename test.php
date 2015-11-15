@@ -16,7 +16,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     //header('Content-Type: application/json');
 
-    echo $putdata;
+    //echo $putdata;
+
+    echo json_encode([
+        "id"=>1,
+        "name"=>"Test Account 1",
+        "client_level"=>null,
+        "web_manager_id"=>null,
+        "account_manager_id"=>null,
+        "created_at"=>"2015-11-15 12:32:41",
+        "updated_at"=>"2015-11-15 12:37:39",
+        "deleted_at"=>null
+    ]);
 
     //echo json_encode(["errors"=>["The value field is required."]]);
 
