@@ -30,6 +30,16 @@ var EditableFieldBox = React.createClass({
     getInitialState: function () {
         return {fValue: []};
     },
+
+    isInSelectedFields: function (node, selection) {
+        var isInlist = false;
+
+        for (var i = selection.length - 1; i >= 0; i--) {
+            if (selection[i] == node.id) isInlist = true;
+        };
+
+        return isInlist;
+    },
     
     componentDidMount: function () {
         var formattedRes, fieldVal = [];
@@ -75,7 +85,6 @@ var EditableFieldBox = React.createClass({
                     } else if (this.props.fieldSelected.constructor !== Array) {
                         selected = JSON.parse('["'+this.props.fieldSelected+'"]');
                     }
-                    //var selected = this.props.fieldSelected.indexOf('[') === -1 ? JSON.parse('["'+this.props.fieldSelected+'"]') : JSON.parse(this.props.fieldSelected);
 
                     // After parsing the formattedRes can be an Object that has to be flatten.
                     var items = [];
@@ -89,9 +98,16 @@ var EditableFieldBox = React.createClass({
                             items.push(element);
                         }
 
-                        items = items.filter(function (obj) {
-                            return selected.toString().indexOf(obj.id.toString()) > -1
-                        });
+                        var newSelection = [];
+
+                        for (var i = items.length - 1; i >= 0; i--) {
+                            if (this.isInSelectedFields(items[i],selected)) {
+                                newSelection.push(items[i]);
+                            }
+                        };
+
+                        items = newSelection;
+
                     } else {
                         items = formattedRes.filter(function (obj) {
                             return selected.toString().indexOf(obj.id.toString()) > -1
@@ -148,13 +164,12 @@ var EditableFieldBox = React.createClass({
                         }
                     };
                 }
-                console.log('Above:'+fieldVal);
+
                 if (fieldVal.length === 0 || fieldVal[0] == "" || e.newValue == '!EMPTY!') {
                     fieldVal = [];
                     fieldVal.push("Select an option...");
-                    console.log('Inside:'+fieldVal);
                 }
-                console.log('Before setting up: '+fieldVal);
+
                 this.setState({fValue: fieldVal});
             } else if (this.props.fieldSource) { // Just to check if it has something...    
                 Axe.grab(this.props.fieldSource, function (res) {
@@ -181,9 +196,15 @@ var EditableFieldBox = React.createClass({
                             items.push(element);
                         }
 
-                        items = items.filter(function (obj) {
-                            return selection.toString().indexOf(obj.id.toString()) > -1
-                        });
+                        var newSelection = [];
+
+                        for (var i = items.length - 1; i >= 0; i--) {
+                            if (this.isInSelectedFields(items[i],selection)) {
+                                newSelection.push(items[i]);
+                            }
+                        };
+
+                        items = newSelection;
                     } else {
                         items = formattedRes.filter(function (obj) {
                             return selection.toString().indexOf(obj.id.toString()) > -1
@@ -430,7 +451,6 @@ var EditableSelectInput = React.createClass({
                     items = formattedRes;
                 }
 
-
                 this.setState({
                     fieldData: items,
                     defValue: this.props.fieldSelected
@@ -450,6 +470,16 @@ var EditableSelectInput = React.createClass({
         this.setState({defValue:selection})
     },
 
+    isInSelectedFields: function (node, selection) {
+        var isInlist = false;
+
+        for (var i = selection.length - 1; i >= 0; i--) {
+            if (selection[i] == node.id) isInlist = true;
+        };
+
+        return isInlist;
+    },
+
     renderSelectOptions: function () {
         if (this.props.fieldSource.indexOf('{') > -1) {
             var newMap = [];
@@ -462,7 +492,7 @@ var EditableSelectInput = React.createClass({
 
             var selectNodes = newMap.map(function (node) {
                 return (
-                    <option key={node.id} value={node.id}>{node['value']}</option>
+                    <option key={node.id} value={node.id} selected={this.isInSelectedFields(node, JSON.parse(this.props.fieldSelected))}>{node['value']}</option>
                 );
             }.bind(this));
         } else {
@@ -478,10 +508,10 @@ var EditableSelectInput = React.createClass({
                     this.state.fieldData = [];
                 }
             }
-            //var arr = Object.keys(obj).map(function(k) { return obj[k] });
+
             var selectNodes = this.state.fieldData.map(function (node) {
                 return (
-                    <option key={node.id} value={node.id}>{node[this.props.fieldName]}</option>
+                    <option key={node.id} value={node.id} selected={this.isInSelectedFields(node, JSON.parse(this.props.fieldSelected))}>{node[this.props.fieldName]}</option>
                 );
             }.bind(this));
         }
@@ -491,7 +521,7 @@ var EditableSelectInput = React.createClass({
 
     render: function () {
         return (
-            <select name={this.props.fieldName} id="editableInput" value={this.state.defValue} onChange={this.handleChange} multiple={this.props.fieldType == 'select' ? false : true}>
+            <select name={this.props.fieldName} id="editableInput" onChange={this.handleChange} multiple={this.props.fieldType == 'select' ? false : true}>
                 {this.renderSelectOptions()}
             </select>
         );
