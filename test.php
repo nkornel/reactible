@@ -33,14 +33,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-    /*$curl = curl_init();
+    $curl = curl_init();
 
     curl_setopt_array($curl, array(
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_URL => 'http://loripsum.net/api/1/short/plaintext'
     ));
     $resp = curl_exec($curl);
-    curl_close($curl);*/
+    curl_close($curl);
 
     //echo json_encode([explode('=', $_SERVER['QUERY_STRING'])[1] => $resp]);
     //echo json_encode([1=>"account",2=>"meta"]);

@@ -473,6 +473,10 @@ var EditableSelectInput = React.createClass({
     isInSelectedFields: function (node, selection) {
         var isInlist = false;
 
+        if (selection !== '!EMPTY!') {
+            selection = JSON.parse(selection);
+        }
+
         for (var i = selection.length - 1; i >= 0; i--) {
             if (selection[i] == node.id) isInlist = true;
         };
@@ -492,7 +496,7 @@ var EditableSelectInput = React.createClass({
 
             var selectNodes = newMap.map(function (node) {
                 return (
-                    <option key={node.id} value={node.id} selected={this.isInSelectedFields(node, JSON.parse(this.props.fieldSelected))}>{node['value']}</option>
+                    <option key={node.id} value={node.id} selected={this.isInSelectedFields(node, this.props.fieldSelected)}>{node['value']}</option>
                 );
             }.bind(this));
         } else {
