@@ -490,8 +490,10 @@ var EditableSelectInput = React.createClass({
     isInSelectedFields: function isInSelectedFields(node, selection) {
         var isInlist = false;
 
-        if (selection !== '!EMPTY!') {
+        try {
             selection = JSON.parse(selection);
+        } catch (e) {
+            selection = JSON.parse('["' + selection + '"]');
         }
 
         for (var i = selection.length - 1; i >= 0; i--) {
