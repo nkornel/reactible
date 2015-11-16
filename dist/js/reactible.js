@@ -551,7 +551,7 @@ var EditableSelectInput = React.createClass({
     render: function render() {
         return React.createElement(
             'select',
-            { name: this.props.fieldName, id: 'editableInput', value: this.valueJsonVerifier(this.state.defValue), onChange: this.handleChange, multiple: this.props.fieldType == 'select' ? false : true },
+            { name: this.props.fieldName, id: 'editableInput', value: this.props.fieldType == 'select' ? this.state.defValue : this.valueJsonVerifier(this.state.defValue), onChange: this.handleChange, multiple: this.props.fieldType == 'select' ? false : true },
             this.renderSelectOptions()
         );
     }
