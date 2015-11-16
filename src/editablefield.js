@@ -470,22 +470,6 @@ var EditableSelectInput = React.createClass({
         this.setState({defValue:selection})
     },
 
-    isInSelectedFields: function (node, selection) {
-        var isInlist = false;
-
-        try {
-            selection = JSON.parse(selection);
-        } catch (e) {
-            selection = JSON.parse('["'+selection+'"]');
-        }
-
-        for (var i = selection.length - 1; i >= 0; i--) {
-            if (selection[i] == node.id) isInlist = true;
-        };
-
-        return isInlist;
-    },
-
     renderSelectOptions: function () {
         if (this.props.fieldSource.indexOf('{') > -1) {
             var newMap = [];
@@ -498,7 +482,7 @@ var EditableSelectInput = React.createClass({
 
             var selectNodes = newMap.map(function (node) {
                 return (
-                    <option key={node.id} value={node.id} selected={this.isInSelectedFields(node, this.props.fieldSelected)}>{node['value']}</option>
+                    <option key={node.id} value={node.id}>{node['value']}</option>
                 );
             }.bind(this));
         } else {
@@ -517,7 +501,7 @@ var EditableSelectInput = React.createClass({
 
             var selectNodes = this.state.fieldData.map(function (node) {
                 return (
-                    <option key={node.id} value={node.id} selected={this.isInSelectedFields(node, JSON.parse(this.props.fieldSelected))}>{node[this.props.fieldName]}</option>
+                    <option key={node.id} value={node.id}>{node[this.props.fieldName]}</option>
                 );
             }.bind(this));
         }
@@ -525,9 +509,27 @@ var EditableSelectInput = React.createClass({
         return selectNodes;
     },
 
+    valueJsonVerifier: function (selected) {
+        if (selected.toString().indexOf('[') == -1 && selected.toString().indexOf(']') == -1) {
+            if (selected.constructor !== Array) {
+                selected = JSON.parse('["'+selected+'"]');
+            }
+        } else {
+            if (JSON.parse(selected)[0].constructor == Number) {
+                var newSelection = JSON.parse(selected);
+                selected = [];
+                for (var i = newSelection.length - 1; i >= 0; i--) {
+                    selected.push(newSelection[i].toString());
+                }               
+            }
+        }
+
+        return selected;
+    },
+
     render: function () {
         return (
-            <select name={this.props.fieldName} id="editableInput" onChange={this.handleChange} multiple={this.props.fieldType == 'select' ? false : true}>
+            <select name={this.props.fieldName} id="editableInput" value={this.valueJsonVerifier(this.state.defValue)} onChange={this.handleChange} multiple={this.props.fieldType == 'select' ? false : true}>
                 {this.renderSelectOptions()}
             </select>
         );
