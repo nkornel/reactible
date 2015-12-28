@@ -572,7 +572,7 @@ var EditableStoreButton = React.createClass({
     displayName: 'EditableStoreButton',
 
     handleStoreEvent: function handleStoreEvent(event) {
-        var element = this.getDOMNode().previousSibling.hasAttribute('data-reactid') ? this.getDOMNode().previousSibling : this.getDOMNode().previousSibling.children[0];
+        var element = event.currentTarget.previousSibling.hasAttribute('data-reactid') ? event.currentTarget.previousSibling : event.currentTarget.previousSibling.children[0];
         var elEvent = event;
 
         if (element.multiple) {
