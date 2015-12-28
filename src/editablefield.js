@@ -416,7 +416,12 @@ var EditableTextAreaInput = React.createClass({
     },
 
     render: function () {
-        return <textarea id="editableInput" rows="5" value={this.state.fieldValue} name={this.props.fieldName} onChange={this.handleChange}></textarea>;
+        return  <textarea id="editableInput" 
+                        rows="5" 
+                        value={this.state.fieldValue} 
+                        name={this.props.fieldName} 
+                        onChange={this.handleChange}>
+                </textarea>;
     }
 });
 
@@ -545,7 +550,7 @@ var EditableSelectInput = React.createClass({
  */
 var EditableStoreButton = React.createClass({
     handleStoreEvent: function (event) {
-        var element = event.target.previousSibling ? event.target.previousSibling : event.target.parentNode.previousSibling;
+        var element = this.getDOMNode().previousSibling.hasAttribute('data-reactid') ? this.getDOMNode().previousSibling : this.getDOMNode().previousSibling.children[0];
         var elEvent = event;
 
         if (element.multiple) {
