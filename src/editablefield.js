@@ -4,7 +4,8 @@
  * Text
  * TextArea
  * Select
- * Select2?
+ * Datetimepicker
+ * Selectize
  *
  * The mandatory attributes are fieldType, fieldName, fieldTitle.
  * The component hierarchy as follows:
@@ -44,7 +45,9 @@ var EditableFieldBox = React.createClass({
     componentDidMount: function () {
         var formattedRes, fieldVal = [];
 
-        if ((this.props.fieldType === 'select' || this.props.fieldType == 'select-multiple')
+        if ((this.props.fieldType === 'select' || 
+            this.props.fieldType === 'select-multiple' ||
+            this.props.fieldType === 'selectize')
             && typeof this.props.fieldSelected !== 'undefined') {
             /**
              * In case of select, radio, check and select2 we need
@@ -137,7 +140,9 @@ var EditableFieldBox = React.createClass({
     },
 
     dataUpdated: function (e) {       
-        if ((this.props.fieldType === 'select' || this.props.fieldType === 'select-multiple')
+        if ((this.props.fieldType === 'select' || 
+            this.props.fieldType === 'select-multiple' ||
+            this.props.fieldType === 'selectize')
             && typeof this.props.fieldSelected !== 'undefined') {
             
             var formattedRes;
@@ -343,16 +348,24 @@ var EditableEditBox = React.createClass({
                             fieldValue={this.props.fieldValue} 
                             fieldSource={this.props.fieldSource} 
                             fieldSelected={this.props.fieldSelected}
-                            fieldType={this.props.fieldType} />
+                            fieldType={this.props.fieldType} />;
                 break;
-            case 'checkbox':
-                return '';
-                break;
-            case 'radio':
-                return '';
-                break;
+            case 'selectize':
+                return <EditableSelectizedInput 
+                            fieldName={this.props.fieldName} 
+                            fieldValue={this.props.fieldValue} 
+                            fieldSource={this.props.fieldSource} 
+                            fieldSelected={this.props.fieldSelected}
+                            fieldType={this.props.fieldType} />;
             case 'textarea':
                 return <EditableTextAreaInput fieldName={this.props.fieldName} fieldValue={this.props.fieldValue} fieldSource={this.props.fieldSource} />
+                break;
+            case 'date':
+            case 'datetime':
+                return <EditableDateTimeInput 
+                            fieldName={this.props.fieldName}
+                            fieldValue={this.props.fieldValue}
+                            fieldType={this.props.fieldType} />;
                 break;
             default:
                 console.log('no-type given');
@@ -399,6 +412,29 @@ var EditableTextInput = React.createClass({
                       onChange={this.handleChange} 
                       className="form-control" 
                       id="editableInput" />
+    }
+});
+
+var EditableDateTimeInput = React.createClass({
+    getInitialState: function () {
+        return {fieldValue: [], errors: []};
+    },
+
+    componentWillReceiveProps: function (nextPros) {
+        this.setState({fieldValue: nextPros.fieldValue});
+    },
+
+    handleChange: function (event) {
+        this.setState({fieldValue: event.target.value});
+    },
+
+    render: function () {
+        return <input type='text' 
+                      className="form-control dtpicker"
+                      data-type={this.props.fieldType}
+                      data-error-hint={this.state.errors}
+                      name={this.props.fieldName}
+                      value={this.state.fieldValue} />
     }
 });
 
@@ -541,6 +577,122 @@ var EditableSelectInput = React.createClass({
     }
 });
 
+var EditableSelectizedInput = React.createClass({
+    getInitialState: function () {
+        return {fieldData: [], defValue: this.props.fieldType == 'selectize' ? 0 : []};
+    },
+
+    componentDidMount: function () {
+        if (this.props.fieldSource.indexOf('{') > -1 && this.props.fieldSource.indexOf('}') > -1) {
+            var formattedSelectedField = this.props.fieldSelected;
+
+            if (formattedSelectedField.indexOf('[') == -1 && formattedSelectedField.indexOf(']') == -1) {
+                formattedSelectedField = '["'+this.props.fieldSelected+'"]';
+            }
+            this.setState({
+                fieldData: JSON.parse(this.props.fieldSource),
+                defValue: JSON.parse(formattedSelectedField)
+            });
+        } else {
+            Axe.grab(this.props.fieldSource, function (res) {
+                var formattedRes = typeof res == 'string' ? JSON.parse(res) : res;
+                var items = [];
+                if (formattedRes.constructor == Object) {
+                    for (var i in formattedRes) {
+                        var element = {};
+                        element["id"] = i;
+                        element[this.props.fieldName] = formattedRes[i];
+                        items.push(element);
+                    }
+                } else {
+                    items = formattedRes;
+                }
+
+                this.setState({
+                    fieldData: items,
+                    defValue: this.props.fieldSelected
+                });
+            }.bind(this));
+        }
+    },
+
+    handleChange: function (ev) {
+        var selection = [];
+        for (var i = ev.target.options.length - 1; i >= 0; i--) {
+            if (ev.target.options[i].selected) {
+                selection.push(ev.target.options[i].value);
+            }
+        };
+
+        this.setState({defValue:selection})
+    },
+
+    renderSelectOptions: function () {
+        if (this.props.fieldSource.indexOf('{') > -1) {
+            var newMap = [];
+            for (var i in this.state.fieldData) {
+                newMap.push({
+                    id: i,
+                    value: this.state.fieldData[i]
+                });
+            }
+
+            var selectNodes = newMap.map(function (node) {
+                return (
+                    <option key={node.id} value={node.id}>{node['value']}</option>
+                );
+            }.bind(this));
+        } else {
+            // Check if object or array. If object turn into an array.
+            if (this.state.fieldData.constructor == Object) {
+                var arr = Object.keys(this.state.fieldData).map (function (k) {
+                    return {k: this.state.fieldData[k]};
+                }.bind(this));
+
+                if (arr.length > 0) {
+                    this.state.fieldData = arr;
+                } else {
+                    this.state.fieldData = [];
+                }
+            }
+
+            var selectNodes = this.state.fieldData.map(function (node) {
+                return (
+                    <option key={node.id} value={node.id}>{node[this.props.fieldName]}</option>
+                );
+            }.bind(this));
+        }
+
+        return selectNodes;
+    },
+
+    valueJsonVerifier: function (selected) {
+        if (selected.toString().indexOf('[') == -1 && selected.toString().indexOf(']') == -1) {
+            if (selected.constructor !== Array) {
+                selected = JSON.parse('["'+selected+'"]');
+            }
+        } else {
+            if (JSON.parse(selected)[0].constructor == Number) {
+                var newSelection = JSON.parse(selected);
+                selected = [];
+                for (var i = newSelection.length - 1; i >= 0; i--) {
+                    selected.push(newSelection[i].toString());
+                }               
+            }
+        }
+
+        return selected;
+    },
+
+    render: function () {
+        return (
+            <select className="selectize" name={this.props.fieldName} value={this.props.fieldType == 'selectize' ? this.state.defValue : this.valueJsonVerifier(this.state.defValue)} onChange={this.handleChange} multiple={this.props.fieldType == 'selectize' ? false : true}>
+                {this.renderSelectOptions()} 
+            </select>
+        );
+    }
+});
+
 /**
  * The EditableStoreButton component
  *
@@ -550,8 +702,13 @@ var EditableSelectInput = React.createClass({
  */
 var EditableStoreButton = React.createClass({
     handleStoreEvent: function (event) {
-        var element = event.currentTarget.previousSibling.hasAttribute('data-reactid') ? event.currentTarget.previousSibling : event.currentTarget.previousSibling.children[0];
+        var element = event.currentTarget.previousSibling.hasAttribute('data-reactid') ? event.currentTarget.previousSibling : event.currentTarget.parentNode.children[0];
         var elEvent = event;
+
+        // Check if element is enclosed into a div due to external bootstrap libs formatting.
+        if (!element.hasAttribute('data-reactid') && element.children.length > 0) {
+            element = element.children[0];
+        }
 
         if (element.multiple) {
             var val = [];
@@ -612,7 +769,7 @@ var EditableStoreButton = React.createClass({
     },
 
     render: function () {
-        return <button type="button" className="editableStoreButton btn btn-primary" onClick={this.handleStoreEvent}><i className="mdi-navigation-check"></i></button>;
+        return <button type="button" className="editableStoreButton btn btn-primary" onClick={this.handleStoreEvent}><i className="material-icons md-light">check_circle</i></button>;
     }
 });
 
@@ -636,7 +793,7 @@ var EditableCancelButton = React.createClass({
     },
 
     render: function () {
-        return <button type="button" className="editableCancelButton btn btn-default" onClick={this.handleClosing}><i className="mdi-navigation-close"></i></button>;
+        return <button type="button" className="editableCancelButton btn btn-default" onClick={this.handleClosing}><i className="material-icons">close</i></button>;
     }
 });
 
