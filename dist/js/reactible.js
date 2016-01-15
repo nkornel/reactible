@@ -50,7 +50,7 @@ var EditableFieldBox = React.createClass({
         var formattedRes,
             fieldVal = [];
 
-        if ((this.props.fieldType === 'select' || this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize') && typeof this.props.fieldSelected !== 'undefined') {
+        if ((this.props.fieldType === 'select' || this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize' || this.props.fieldType === 'selectize-multiple') && typeof this.props.fieldSelected !== 'undefined') {
             /**
              * In case of select, radio, check and select2 we need
              * the prepopulated list with id: fieldName parts.
@@ -63,7 +63,7 @@ var EditableFieldBox = React.createClass({
                 var list = JSON.parse(this.props.fieldSource);
 
                 var selected = [];
-                if (this.props.fieldType === 'select-multiple') {
+                if (this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize-multiple') {
                     selected = this.props.fieldSelected && this.props.fieldSelected !== '!EMPTY!' ? JSON.parse(this.props.fieldSelected) : [];
                 } else if (this.props.fieldSelected.constructor !== Array) {
                     selected = this.props.fieldSelected !== '!EMPTY!' ? JSON.parse('["' + this.props.fieldSelected + '"]') : [];
@@ -84,7 +84,7 @@ var EditableFieldBox = React.createClass({
                     // Treating the selection which is for some reason sometimes comes as a string.
                     // Must be traced...
                     var selected = [];
-                    if (this.props.fieldType === 'select-multiple') {
+                    if (this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize-multiple') {
                         selected = JSON.parse(this.props.fieldSelected);
                     } else if (this.props.fieldSelected.constructor !== Array) {
                         selected = JSON.parse('["' + this.props.fieldSelected + '"]');
@@ -140,7 +140,7 @@ var EditableFieldBox = React.createClass({
     },
 
     dataUpdated: function dataUpdated(e) {
-        if ((this.props.fieldType === 'select' || this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize') && typeof this.props.fieldSelected !== 'undefined') {
+        if ((this.props.fieldType === 'select' || this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize' || this.props.fieldType === 'selectize-multiple') && typeof this.props.fieldSelected !== 'undefined') {
 
             var formattedRes;
             var fieldVal = [];
@@ -265,7 +265,7 @@ var EditableField = React.createClass({
     },
 
     checkType: function checkType() {
-        if (this.props.fieldType === 'select-multiple') {
+        if (this.props.fieldType === 'select-multiple' || this.props.fieldType === 'selectize-multiple') {
             var selectedNodes = this.props.fieldValue.map((function (node) {
                 return React.createElement(
                     'li',
@@ -358,6 +358,7 @@ var EditableEditBox = React.createClass({
                     fieldType: this.props.fieldType });
                 break;
             case 'selectize':
+            case 'selectize-multiple':
                 return React.createElement(EditableSelectizedInput, {
                     fieldName: this.props.fieldName,
                     fieldValue: this.props.fieldValue,
@@ -599,7 +600,7 @@ var EditableSelectizedInput = React.createClass({
     displayName: 'EditableSelectizedInput',
 
     getInitialState: function getInitialState() {
-        return { fieldData: [], defValue: this.props.fieldType == 'selectize' ? 0 : [] };
+        return { fieldData: [], defValue: this.props.fieldType === 'selectize' || this.props.fieldType === 'selectize-multiple' ? 0 : [] };
     },
 
     componentDidMount: function componentDidMount() {
@@ -711,7 +712,7 @@ var EditableSelectizedInput = React.createClass({
     render: function render() {
         return React.createElement(
             'select',
-            { className: 'selectize', name: this.props.fieldName, value: this.props.fieldType == 'selectize' ? this.state.defValue : this.valueJsonVerifier(this.state.defValue), onChange: this.handleChange, multiple: this.props.fieldType == 'selectize' ? false : true },
+            { className: 'selectize', name: this.props.fieldName, value: this.props.fieldType == 'selectize' ? this.state.defValue : this.valueJsonVerifier(this.state.defValue), onChange: this.handleChange, multiple: this.props.fieldType === 'selectize-multiple' ? true : false },
             this.renderSelectOptions()
         );
     }
